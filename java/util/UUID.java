@@ -159,6 +159,10 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *
      * @return  A {@code UUID} generated from the specified array
      */
+
+    /**
+     * byte数组通过MD5加密生成UUID对象
+     */
     public static UUID nameUUIDFromBytes(byte[] name) {
         MessageDigest md;
         try {
@@ -188,6 +192,10 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *          described in {@link #toString}
      *
      */
+
+     /**
+      * UUID字符串转换为UUID对象
+      */
     public static UUID fromString(String name) {
         String[] components = name.split("-");
         if (components.length != 5)
@@ -372,6 +380,10 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *
      * @return  A string representation of this {@code UUID}
      */
+
+     /**
+      * UUID转换为String
+      */
     public String toString() {
         return (digits(mostSigBits >> 32, 8) + "-" +
                 digits(mostSigBits >> 16, 4) + "-" +
@@ -381,6 +393,8 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
     }
 
     /** Returns val represented by the specified number of hex digits. */
+
+    /*返回由指定的十六进制数字表示的val*/
     private static String digits(long val, int digits) {
         long hi = 1L << (digits * 4);
         return Long.toHexString(hi | (val & (hi - 1))).substring(1);

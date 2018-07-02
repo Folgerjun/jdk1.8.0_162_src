@@ -108,15 +108,19 @@ public class Arrays {
      * Checks that {@code fromIndex} and {@code toIndex} are in
      * the range and throws an exception if they aren't.
      */
+
+    /**
+     * 判断验证
+     */
     private static void rangeCheck(int arrayLength, int fromIndex, int toIndex) {
-        if (fromIndex > toIndex) {
+        if (fromIndex > toIndex) {  // 起始下标大于结束下标
             throw new IllegalArgumentException(
                     "fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
         }
-        if (fromIndex < 0) {
+        if (fromIndex < 0) {    // 起始下标大于0
             throw new ArrayIndexOutOfBoundsException(fromIndex);
         }
-        if (toIndex > arrayLength) {
+        if (toIndex > arrayLength) {    // 结束下标大于长度
             throw new ArrayIndexOutOfBoundsException(toIndex);
         }
     }
@@ -165,7 +169,7 @@ public class Arrays {
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
      */
     public static void sort(int[] a, int fromIndex, int toIndex) {
-        rangeCheck(a.length, fromIndex, toIndex);
+        rangeCheck(a.length, fromIndex, toIndex);   // 先进行判断验证
         DualPivotQuicksort.sort(a, fromIndex, toIndex - 1, null, 0, 0);
     }
 
@@ -2969,6 +2973,10 @@ public class Arrays {
      * @throws ArrayIndexOutOfBoundsException if <tt>fromIndex &lt; 0</tt> or
      *         <tt>toIndex &gt; a.length</tt>
      */
+
+    /*
+     * 数组里元素都是一个值
+     */
     public static void fill(char[] a, int fromIndex, int toIndex, char val) {
         rangeCheck(a.length, fromIndex, toIndex);
         for (int i = fromIndex; i < toIndex; i++)
@@ -3794,6 +3802,10 @@ public class Arrays {
      * @param a the array by which the list will be backed
      * @return a list view of the specified array
      */
+
+    /**
+     * 数组转集合 实质还是数组
+     */
     @SafeVarargs
     @SuppressWarnings("varargs")
     public static <T> List<T> asList(T... a) {
@@ -4557,6 +4569,10 @@ public class Arrays {
      * @see #deepToString(Object[])
      * @since 1.5
      */
+
+    /**
+     * 打印数组 不适用于嵌套数组
+     */
     public static String toString(Object[] a) {
         if (a == null)
             return "null";
@@ -4607,6 +4623,10 @@ public class Arrays {
      * @return a string representation of <tt>a</tt>
      * @see #toString(Object[])
      * @since 1.5
+     */
+
+    /**
+     * Obj数组转为String 适用于数组里面嵌数组
      */
     public static String deepToString(Object[] a) {
         if (a == null)

@@ -112,6 +112,10 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Default initial capacity.
      */
+
+    /**
+     * 默认初始容量
+     */
     private static final int DEFAULT_CAPACITY = 10;
 
     /**
@@ -148,9 +152,9 @@ public class ArrayList<E> extends AbstractList<E>
      * @throws IllegalArgumentException if the specified initial capacity
      *         is negative
      */
-    public ArrayList(int initialCapacity) {
+    public ArrayList(int initialCapacity) {     // 带容量的构造函数
         if (initialCapacity > 0) {
-            this.elementData = new Object[initialCapacity];
+            this.elementData = new Object[initialCapacity];     // 实质为数组
         } else if (initialCapacity == 0) {
             this.elementData = EMPTY_ELEMENTDATA;
         } else {
@@ -235,7 +239,7 @@ public class ArrayList<E> extends AbstractList<E>
         modCount++;
 
         // overflow-conscious code
-        if (minCapacity - elementData.length > 0)
+        if (minCapacity - elementData.length > 0)   // 大小不够扩容
             grow(minCapacity);
     }
 
@@ -256,13 +260,13 @@ public class ArrayList<E> extends AbstractList<E>
     private void grow(int minCapacity) {
         // overflow-conscious code
         int oldCapacity = elementData.length;
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
+        int newCapacity = oldCapacity + (oldCapacity >> 1);     // 相当于原先的1.5倍
         if (newCapacity - minCapacity < 0)
-            newCapacity = minCapacity;
+            newCapacity = minCapacity;      // 大小还不够那就取这个值
         if (newCapacity - MAX_ARRAY_SIZE > 0)
             newCapacity = hugeCapacity(minCapacity);
         // minCapacity is usually close to size, so this is a win:
-        elementData = Arrays.copyOf(elementData, newCapacity);
+        elementData = Arrays.copyOf(elementData, newCapacity);  // 重组数组
     }
 
     private static int hugeCapacity(int minCapacity) {
@@ -333,7 +337,7 @@ public class ArrayList<E> extends AbstractList<E>
      */
     public int lastIndexOf(Object o) {
         if (o == null) {
-            for (int i = size-1; i >= 0; i--)
+            for (int i = size-1; i >= 0; i--)   // 反向查找
                 if (elementData[i]==null)
                     return i;
         } else {
@@ -444,6 +448,10 @@ public class ArrayList<E> extends AbstractList<E>
      * @return the element previously at the specified position
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
+
+    /**
+     * 赋值并返回旧值
+     */
     public E set(int index, E element) {
         rangeCheck(index);
 
@@ -472,6 +480,10 @@ public class ArrayList<E> extends AbstractList<E>
      * @param index index at which the specified element is to be inserted
      * @param element element to be inserted
      * @throws IndexOutOfBoundsException {@inheritDoc}
+     */
+
+    /**
+     * 插入数据 后面数据依次后移
      */
     public void add(int index, E element) {
         rangeCheckForAdd(index);
@@ -559,7 +571,7 @@ public class ArrayList<E> extends AbstractList<E>
 
         // clear to let GC do its work
         for (int i = 0; i < size; i++)
-            elementData[i] = null;
+            elementData[i] = null;      // 数据都置为null
 
         size = 0;
     }
@@ -576,6 +588,10 @@ public class ArrayList<E> extends AbstractList<E>
      * @param c collection containing elements to be added to this list
      * @return <tt>true</tt> if this list changed as a result of the call
      * @throws NullPointerException if the specified collection is null
+     */
+
+    /**
+     * 拼接数组
      */
     public boolean addAll(Collection<? extends E> c) {
         Object[] a = c.toArray();
@@ -609,7 +625,7 @@ public class ArrayList<E> extends AbstractList<E>
         ensureCapacityInternal(size + numNew);  // Increments modCount
 
         int numMoved = size - index;
-        if (numMoved > 0)
+        if (numMoved > 0)   // 原数组 原数组起始位 目标数组 目标数组起始位 长度
             System.arraycopy(elementData, index, elementData, index + numNew,
                              numMoved);
 
