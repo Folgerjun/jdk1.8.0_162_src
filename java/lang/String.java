@@ -108,6 +108,7 @@ import java.util.regex.PatternSyntaxException;
  * @since   JDK1.0
  */
 
+/*final 修饰不可继承*/
 public final class String
     implements java.io.Serializable, Comparable<String>, CharSequence {
     /** The value is used for character storage. */
@@ -187,7 +188,7 @@ public final class String
      *          If the {@code offset} and {@code count} arguments index
      *          characters outside the bounds of the {@code value} array
      */
-    public String(char value[], int offset, int count) {
+    public String(char value[], int offset, int count) {        // 根据指定开始下标和位数 重组value
         if (offset < 0) {
             throw new StringIndexOutOfBoundsException(offset);
         }
@@ -377,11 +378,11 @@ public final class String
      * constructors.
      */
     private static void checkBounds(byte[] bytes, int offset, int length) {
-        if (length < 0)
+        if (length < 0)     // 长度小于0 抛出异常
             throw new StringIndexOutOfBoundsException(length);
-        if (offset < 0)
+        if (offset < 0)     // 下标小于0 抛出异常
             throw new StringIndexOutOfBoundsException(offset);
-        if (offset > bytes.length - length)
+        if (offset > bytes.length - length)     // 会越界 抛出异常
             throw new StringIndexOutOfBoundsException(offset + length);
     }
 
@@ -682,8 +683,8 @@ public final class String
      *             string.
      * @since      1.5
      */
-    public int codePointAt(int index) {
-        if ((index < 0) || (index >= value.length)) {
+    public int codePointAt(int index) {     // 返回指定索引处的字符（Unicode 代码点） Asiic码形式返回
+        if ((index < 0) || (index >= value.length)) {       // 下标不符 抛出异常
             throw new StringIndexOutOfBoundsException(index);
         }
         return Character.codePointAtImpl(value, index, value.length);
@@ -711,7 +712,7 @@ public final class String
      *            of this string.
      * @since     1.5
      */
-    public int codePointBefore(int index) {
+    public int codePointBefore(int index) {     // 返回字符串参数(索引)之前的字符,并将其以Asiic码形式返回
         int i = index - 1;
         if ((i < 0) || (i >= value.length)) {
             throw new StringIndexOutOfBoundsException(index);
@@ -767,7 +768,7 @@ public final class String
      *   of {@code codePointOffset} code points.
      * @since 1.5
      */
-    public int offsetByCodePoints(int index, int codePointOffset) {
+    public int offsetByCodePoints(int index, int codePointOffset) {     //  返回此 String 中从给定的 index 处偏移 codePointOffset 个代码点的索引。
         if (index < 0 || index > value.length) {
             throw new IndexOutOfBoundsException();
         }
@@ -913,7 +914,7 @@ public final class String
      * @since  JDK1.1
      */
     public byte[] getBytes(String charsetName)
-            throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {       // String转byte[] 编码格式
         if (charsetName == null) throw new NullPointerException();
         return StringCoding.encode(charsetName, value, 0, value.length);
     }
@@ -1102,7 +1103,7 @@ public final class String
      *
      * @see  #equals(Object)
      */
-    public boolean equalsIgnoreCase(String anotherString) {
+    public boolean equalsIgnoreCase(String anotherString) {     // 忽略大小写判断是否相等
         return (this == anotherString) ? true
                 : (anotherString != null)
                 && (anotherString.value.length == value.length)
@@ -1153,12 +1154,12 @@ public final class String
     public int compareTo(String anotherString) {
         int len1 = value.length;
         int len2 = anotherString.value.length;
-        int lim = Math.min(len1, len2);
+        int lim = Math.min(len1, len2);     // 取较小的长度
         char v1[] = value;
         char v2[] = anotherString.value;
 
         int k = 0;
-        while (k < lim) {
+        while (k < lim) {       // 该比较基于字符串中各个字符的 Unicode 值。
             char c1 = v1[k];
             char c2 = v2[k];
             if (c1 != c2) {
@@ -1399,19 +1400,19 @@ public final class String
      *          this.substring(toffset).startsWith(prefix)
      *          </pre>
      */
-    public boolean startsWith(String prefix, int toffset) {
+    public boolean startsWith(String prefix, int toffset) {     // 从指定下标开始判断是否是该字符串开始的
         char ta[] = value;
         int to = toffset;
         char pa[] = prefix.value;
         int po = 0;
         int pc = prefix.value.length;
         // Note: toffset might be near -1>>>1.
-        if ((toffset < 0) || (toffset > value.length - pc)) {
+        if ((toffset < 0) || (toffset > value.length - pc)) {       // 校验下标是否合理
             return false;
         }
         while (--pc >= 0) {
-            if (ta[to++] != pa[po++]) {
-                return false;
+            if (ta[to++] != pa[po++]) {     // 判断是否相等  直到匹配完指定字符串长度
+                return false;       // 只要不相等就返回false
             }
         }
         return true;
@@ -1445,7 +1446,7 @@ public final class String
      *          empty string or is equal to this {@code String} object
      *          as determined by the {@link #equals(Object)} method.
      */
-    public boolean endsWith(String suffix) {
+    public boolean endsWith(String suffix) {        // 巧妙复用了函数
         return startsWith(suffix, value.length - suffix.value.length);
     }
 
@@ -1453,7 +1454,7 @@ public final class String
      * Returns a hash code for this string. The hash code for a
      * {@code String} object is computed as
      * <blockquote><pre>
-     * s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
+     * s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]     // 计算公式
      * </pre></blockquote>
      * using {@code int} arithmetic, where {@code s[i]} is the
      * <i>i</i>th character of the string, {@code n} is the length of
@@ -1462,7 +1463,7 @@ public final class String
      *
      * @return  a hash code value for this object.
      */
-    public int hashCode() {
+    public int hashCode() {     // 返回hash值
         int h = hash;
         if (h == 0 && value.length > 0) {
             char val[] = value;
@@ -1923,7 +1924,7 @@ public final class String
      *             length of this {@code String} object.
      */
     public String substring(int beginIndex) {
-        if (beginIndex < 0) {
+        if (beginIndex < 0) {       // 校验下标是否合理
             throw new StringIndexOutOfBoundsException(beginIndex);
         }
         int subLen = value.length - beginIndex;
@@ -1955,7 +1956,7 @@ public final class String
      *             {@code beginIndex} is larger than
      *             {@code endIndex}.
      */
-    public String substring(int beginIndex, int endIndex) {
+    public String substring(int beginIndex, int endIndex) {     // 重组指定下标字符串
         if (beginIndex < 0) {
             throw new StringIndexOutOfBoundsException(beginIndex);
         }
@@ -2063,23 +2064,23 @@ public final class String
      * @return  a string derived from this string by replacing every
      *          occurrence of {@code oldChar} with {@code newChar}.
      */
-    public String replace(char oldChar, char newChar) {
-        if (oldChar != newChar) {
+    public String replace(char oldChar, char newChar) {     // 指定字符替换旧字符
+        if (oldChar != newChar) {       // 新旧字符不同
             int len = value.length;
             int i = -1;
             char[] val = value; /* avoid getfield opcode */
 
-            while (++i < len) {
+            while (++i < len) {         // 找到旧字符下标
                 if (val[i] == oldChar) {
                     break;
                 }
             }
-            if (i < len) {
+            if (i < len) {      // 目标字符之前的字符与原来一样
                 char buf[] = new char[len];
                 for (int j = 0; j < i; j++) {
                     buf[j] = val[j];
                 }
-                while (i < len) {
+                while (i < len) {       // 替换目标字符后 之后字符也与原来一样
                     char c = val[i];
                     buf[i] = (c == oldChar) ? newChar : c;
                     i++;

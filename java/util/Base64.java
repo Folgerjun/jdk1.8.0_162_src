@@ -84,7 +84,7 @@ public class Base64 {
      *
      * @return  A Base64 encoder.
      */
-    public static Encoder getEncoder() {
+    public static Encoder getEncoder() {        // 返回Base64.Encoder使用 Basic类型base64编码方案进行编码的代码。
          return Encoder.RFC4648;
     }
 
@@ -95,7 +95,7 @@ public class Base64 {
      *
      * @return  A Base64 encoder.
      */
-    public static Encoder getUrlEncoder() {
+    public static Encoder getUrlEncoder() {     // 返回Base64.Encoder使用 URL和Filename安全类型base64编码方案进行编码的代码。
          return Encoder.RFC4648_URLSAFE;
     }
 
@@ -105,7 +105,7 @@ public class Base64 {
      *
      * @return  A Base64 encoder.
      */
-    public static Encoder getMimeEncoder() {
+    public static Encoder getMimeEncoder() {        // 返回Base64.Encoder使用 MIME类型base64编码方案进行编码的代码。
         return Encoder.RFC2045;
     }
 
@@ -127,6 +127,8 @@ public class Base64 {
      *          character of "The Base64 Alphabet" as specified in Table 1 of
      *          RFC 2045.
      */
+
+    /*返回Base64.Encoder使用具有指定行长度和行分隔符的 MIME类型base64编码方案进行编码。*/
     public static Encoder getMimeEncoder(int lineLength, byte[] lineSeparator) {
          Objects.requireNonNull(lineSeparator);
          int[] base64 = Decoder.fromBase64;
@@ -147,7 +149,7 @@ public class Base64 {
      *
      * @return  A Base64 decoder.
      */
-    public static Decoder getDecoder() {
+    public static Decoder getDecoder() {        // 返回Base64.Decoder使用Basic类型base64编码方案解码的内容 。
          return Decoder.RFC4648;
     }
 
@@ -158,7 +160,7 @@ public class Base64 {
      *
      * @return  A Base64 decoder.
      */
-    public static Decoder getUrlDecoder() {
+    public static Decoder getUrlDecoder() {     // Base64.Decoder使用URL和Filename安全类型base64编码方案返回一个解码 。
          return Decoder.RFC4648_URLSAFE;
     }
 
@@ -168,7 +170,7 @@ public class Base64 {
      *
      * @return  A Base64 decoder.
      */
-    public static Decoder getMimeDecoder() {
+    public static Decoder getMimeDecoder() {        // Base64.Decoder使用MIME类型base64解码方案返回一个解码 。
          return Decoder.RFC2045;
     }
 
@@ -464,7 +466,7 @@ public class Base64 {
      * @see     Encoder
      * @since   1.8
      */
-    public static class Decoder {
+    public static class Decoder {       // 解码
 
         private final boolean isURL;
         private final boolean isMIME;

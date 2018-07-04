@@ -98,13 +98,21 @@ public class Collections {
      * (The first word of each tuning parameter name is the algorithm to which
      * it applies.)
      */
+    // 二分查找阈值
     private static final int BINARYSEARCH_THRESHOLD   = 5000;
+    // 反向阈值
     private static final int REVERSE_THRESHOLD        =   18;
+    // 洗牌阈值
     private static final int SHUFFLE_THRESHOLD        =    5;
+    // 填充阈值
     private static final int FILL_THRESHOLD           =   25;
+    // 旋转阈值
     private static final int ROTATE_THRESHOLD         =  100;
+    // 拷贝阈值
     private static final int COPY_THRESHOLD           =   10;
+    // 替换阈值
     private static final int REPLACEALL_THRESHOLD     =   11;
+    // 子集合索引阈值
     private static final int INDEXOFSUBLIST_THRESHOLD =   35;
 
     /**
@@ -221,18 +229,18 @@ public class Collections {
         int high = list.size()-1;
 
         while (low <= high) {
-            int mid = (low + high) >>> 1;
+            int mid = (low + high) >>> 1;       // 获取中间索引
             Comparable<? super T> midVal = list.get(mid);
-            int cmp = midVal.compareTo(key);
+            int cmp = midVal.compareTo(key);        // 中间值与key进行比较
 
-            if (cmp < 0)
+            if (cmp < 0)        // 小于key，在高半部分查找
                 low = mid + 1;
-            else if (cmp > 0)
+            else if (cmp > 0)       // 大于key，在低半部分查找
                 high = mid - 1;
             else
-                return mid; // key found
+                return mid; // key Found 找到值 返回
         }
-        return -(low + 1);  // key not found
+        return -(low + 1);  // key not found 未找到 返回负数
     }
 
     private static <T>
@@ -261,9 +269,9 @@ public class Collections {
      * Gets the ith element from the given list by repositioning the specified
      * list listIterator.
      */
-    private static <T> T get(ListIterator<? extends T> i, int index) {
+    private static <T> T get(ListIterator<? extends T> i, int index) {      // 遍历查找元素
         T obj = null;
-        int pos = i.nextIndex();
+        int pos = i.nextIndex();        // 下一个结点索引
         if (pos <= index) {
             do {
                 obj = i.next();
@@ -373,9 +381,9 @@ public class Collections {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static void reverse(List<?> list) {
         int size = list.size();
-        if (size < REVERSE_THRESHOLD || list instanceof RandomAccess) {
+        if (size < REVERSE_THRESHOLD || list instanceof RandomAccess) {     // 小于反向阈值或者可以随机访问
             for (int i=0, mid=size>>1, j=size-1; i<mid; i++, j--)
-                swap(list, i, j);
+                swap(list, i, j);   // 下标值相互交换
         } else {
             // instead of using a raw type here, it's possible to capture
             // the wildcard but it will require a call to a supplementary
@@ -494,13 +502,13 @@ public class Collections {
         // the wildcard but it will require a call to a supplementary
         // private method
         final List l = list;
-        l.set(i, l.set(j, l.get(i)));
+        l.set(i, l.set(j, l.get(i)));   // 相互交换
     }
 
     /**
      * Swaps the two specified elements in the specified array.
      */
-    private static void swap(Object[] arr, int i, int j) {
+    private static void swap(Object[] arr, int i, int j) {      // 数组交换
         Object tmp = arr[i];
         arr[i] = arr[j];
         arr[j] = tmp;
@@ -521,11 +529,11 @@ public class Collections {
     public static <T> void fill(List<? super T> list, T obj) {
         int size = list.size();
 
-        if (size < FILL_THRESHOLD || list instanceof RandomAccess) {
-            for (int i=0; i<size; i++)
+        if (size < FILL_THRESHOLD || list instanceof RandomAccess) {        // 小于填充阈值或者集合可以随机访问
+            for (int i=0; i<size; i++)      // 循环赋值
                 list.set(i, obj);
         } else {
-            ListIterator<? super T> itr = list.listIterator();
+            ListIterator<? super T> itr = list.listIterator();      // 使用迭代器模式进行填充
             for (int i=0; i<size; i++) {
                 itr.next();
                 itr.set(obj);
@@ -551,18 +559,18 @@ public class Collections {
      *         list-iterator does not support the <tt>set</tt> operation.
      */
     public static <T> void copy(List<? super T> dest, List<? extends T> src) {
-        int srcSize = src.size();
-        if (srcSize > dest.size())
+        int srcSize = src.size();       // 源集合大小
+        if (srcSize > dest.size())      // 源集合大小大于目标集合大小，抛出异常
             throw new IndexOutOfBoundsException("Source does not fit in dest");
 
         if (srcSize < COPY_THRESHOLD ||
-            (src instanceof RandomAccess && dest instanceof RandomAccess)) {
+            (src instanceof RandomAccess && dest instanceof RandomAccess)) {        // 小于拷贝阈值或者src和dest集合都支持随机访问
             for (int i=0; i<srcSize; i++)
-                dest.set(i, src.get(i));
+                dest.set(i, src.get(i));         // 遍历，拷贝
         } else {
-            ListIterator<? super T> di=dest.listIterator();
-            ListIterator<? extends T> si=src.listIterator();
-            for (int i=0; i<srcSize; i++) {
+            ListIterator<? super T> di=dest.listIterator();     // 目标集合的迭代器
+            ListIterator<? extends T> si=src.listIterator();         // 源集合的迭代器
+            for (int i=0; i<srcSize; i++) {      // 遍历，拷贝
                 di.next();
                 di.set(si.next());
             }
@@ -592,15 +600,15 @@ public class Collections {
      * @see Comparable
      */
     public static <T extends Object & Comparable<? super T>> T min(Collection<? extends T> coll) {
-        Iterator<? extends T> i = coll.iterator();
-        T candidate = i.next();
+        Iterator<? extends T> i = coll.iterator();      // 迭代器
+        T candidate = i.next();     // 第一个元素作为候选元素
 
         while (i.hasNext()) {
             T next = i.next();
-            if (next.compareTo(candidate) < 0)
+            if (next.compareTo(candidate) < 0)      // 小于候选元素则替换
                 candidate = next;
         }
-        return candidate;
+        return candidate;       // 返回最小值
     }
 
     /**
@@ -771,19 +779,19 @@ public class Collections {
      * @since 1.4
      */
     public static void rotate(List<?> list, int distance) {
-        if (list instanceof RandomAccess || list.size() < ROTATE_THRESHOLD)
+        if (list instanceof RandomAccess || list.size() < ROTATE_THRESHOLD)      // 可随机访问或小于阈值
             rotate1(list, distance);
         else
             rotate2(list, distance);
     }
 
     private static <T> void rotate1(List<T> list, int distance) {
-        int size = list.size();
-        if (size == 0)
+        int size = list.size();     // 获取集合大小
+        if (size == 0)      // 数量为0直接返回
             return;
-        distance = distance % size;
+        distance = distance % size;     // 取模
         if (distance < 0)
-            distance += size;
+            distance += size;       // 保证不为负数
         if (distance == 0)
             return;
 
@@ -791,28 +799,28 @@ public class Collections {
             T displaced = list.get(cycleStart);
             int i = cycleStart;
             do {
-                i += distance;
+                i += distance;      // 依次往后递推
                 if (i >= size)
-                    i -= size;
-                displaced = list.set(i, displaced);
-                nMoved ++;
-            } while (i != cycleStart);
+                    i -= size;      // 一轮赋值后回到原处
+                displaced = list.set(i, displaced);     // 赋值并返回旧值
+                nMoved ++;      // 重新赋值一个数加一
+            } while (i != cycleStart);      // 直到回到初值
         }
     }
 
-    private static void rotate2(List<?> list, int distance) {
-        int size = list.size();
+    private static void rotate2(List<?> list, int distance) {       // {1，2，3，4}  2
+        int size = list.size();     // 4
         if (size == 0)
             return;
         int mid =  -distance % size;
         if (mid < 0)
-            mid += size;
+            mid += size;        // 2
         if (mid == 0)
             return;
 
-        reverse(list.subList(0, mid));
-        reverse(list.subList(mid, size));
-        reverse(list);
+        reverse(list.subList(0, mid));      // {2，1，3，4}
+        reverse(list.subList(mid, size));       // {2，1，4，3}
+        reverse(list);      // {3，4，1，2}
     }
 
     /**
@@ -834,11 +842,11 @@ public class Collections {
      *         its list-iterator does not support the <tt>set</tt> operation.
      * @since  1.4
      */
-    public static <T> boolean replaceAll(List<T> list, T oldVal, T newVal) {
+    public static <T> boolean replaceAll(List<T> list, T oldVal, T newVal) {        // 用于替换集合中所有指定元素
         boolean result = false;
         int size = list.size();
-        if (size < REPLACEALL_THRESHOLD || list instanceof RandomAccess) {
-            if (oldVal==null) {
+        if (size < REPLACEALL_THRESHOLD || list instanceof RandomAccess) {       // 小于替换阈值或者可以随机访问
+            if (oldVal==null) {     // 旧值为null
                 for (int i=0; i<size; i++) {
                     if (list.get(i)==null) {
                         list.set(i, newVal);
@@ -853,7 +861,7 @@ public class Collections {
                     }
                 }
             }
-        } else {
+        } else {        // 用迭代器来遍历
             ListIterator<T> itr=list.listIterator();
             if (oldVal==null) {
                 for (int i=0; i<size; i++) {
@@ -895,36 +903,36 @@ public class Collections {
      * @since  1.4
      */
     public static int indexOfSubList(List<?> source, List<?> target) {
-        int sourceSize = source.size();
-        int targetSize = target.size();
-        int maxCandidate = sourceSize - targetSize;
+        int sourceSize = source.size();     // 源集合大小
+        int targetSize = target.size();     // 目标集合大小
+        int maxCandidate = sourceSize - targetSize;     // 大小差
 
         if (sourceSize < INDEXOFSUBLIST_THRESHOLD ||
-            (source instanceof RandomAccess&&target instanceof RandomAccess)) {
+            (source instanceof RandomAccess&&target instanceof RandomAccess)) {     // 小于子集索引阈值或者(源集合与目标集合都支持随机访问)
         nextCand:
-            for (int candidate = 0; candidate <= maxCandidate; candidate++) {
+            for (int candidate = 0; candidate <= maxCandidate; candidate++) {        // 只需要遍历从0到maxCandidate即可
                 for (int i=0, j=candidate; i<targetSize; i++, j++)
-                    if (!eq(target.get(i), source.get(j)))
-                        continue nextCand;  // Element mismatch, try next cand
-                return candidate;  // All elements of candidate matched target
+                    if (!eq(target.get(i), source.get(j)))      // 不相等
+                        continue nextCand;  // Element mismatch, try next nextCand 不匹配，又回到for,此时将不会执行int candidate = 0操作
+                return candidate;  // All elements of candidate matched target 全部匹配，返回索引
             }
-        } else {  // Iterator version of above algorithm
-            ListIterator<?> si = source.listIterator();
+        } else {  // Iterator version of above algorithm 否则，使用迭代器操作
+            ListIterator<?> si = source.listIterator();     // 获取迭代器
         nextCand:
             for (int candidate = 0; candidate <= maxCandidate; candidate++) {
                 ListIterator<?> ti = target.listIterator();
                 for (int i=0; i<targetSize; i++) {
-                    if (!eq(ti.next(), si.next())) {
-                        // Back up source iterator to next candidate
+                    if (!eq(ti.next(), si.next())) {        // 不相等
+                        // Back up source iterator to next candidate 回溯源集合迭代器
                         for (int j=0; j<i; j++)
                             si.previous();
-                        continue nextCand;
+                        continue nextCand; // 又回到for,此时将不会执行int candidate = 0操作
                     }
                 }
-                return candidate;
+                return candidate;       // 全部匹配，返回索引
             }
         }
-        return -1;  // No candidate matched the target
+        return -1;  // No candidate matched the target  不匹配，返回-1
     }
 
     /**
@@ -5263,12 +5271,12 @@ public class Collections {
      * @throws NullPointerException if <tt>c</tt> is null
      * @since 1.5
      */
-    public static int frequency(Collection<?> c, Object o) {
+    public static int frequency(Collection<?> c, Object o) {        // 用来统计一个元素在集合中出现的次数
         int result = 0;
-        if (o == null) {
-            for (Object e : c)
+        if (o == null) {        // 该元素为null
+            for (Object e : c)      // 遍历集合
                 if (e == null)
-                    result++;
+                    result++;       // 匹配到则加一
         } else {
             for (Object e : c)
                 if (o.equals(e))
@@ -5395,9 +5403,9 @@ public class Collections {
      * @since 1.5
      */
     @SafeVarargs
-    public static <T> boolean addAll(Collection<? super T> c, T... elements) {
+    public static <T> boolean addAll(Collection<? super T> c, T... elements) {      // 可添加多个元素
         boolean result = false;
-        for (T element : elements)
+        for (T element : elements)      // for 循环添加
             result |= c.add(element);
         return result;
     }

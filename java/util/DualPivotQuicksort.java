@@ -58,35 +58,47 @@ final class DualPivotQuicksort {
     /**
      * The maximum number of runs in merge sort.
      */
+
+    /*合并排序的最大运行次数*/
     private static final int MAX_RUN_COUNT = 67;
 
     /**
      * The maximum length of run in merge sort.
      */
+
+    /*合并排序中运行的最大长度*/
     private static final int MAX_RUN_LENGTH = 33;
 
     /**
      * If the length of an array to be sorted is less than this
      * constant, Quicksort is used in preference to merge sort.
      */
+
+    /*如果要排序的数组的长度小于此常量，较之合并排序则优先使用快速排序。*/
     private static final int QUICKSORT_THRESHOLD = 286;
 
     /**
      * If the length of an array to be sorted is less than this
      * constant, insertion sort is used in preference to Quicksort.
      */
+
+    /*如果要排序的数组的长度小于此常量，较之快速排序则优先使用插入排序。*/
     private static final int INSERTION_SORT_THRESHOLD = 47;
 
     /**
      * If the length of a byte array to be sorted is greater than this
      * constant, counting sort is used in preference to insertion sort.
      */
+
+    /*如果要排序的字节数组的长度大于此常数，较之插入排序则优先使用计数排序。*/
     private static final int COUNTING_SORT_THRESHOLD_FOR_BYTE = 29;
 
     /**
      * If the length of a short or char array to be sorted is greater
      * than this constant, counting sort is used in preference to Quicksort.
      */
+
+    /*如果要排序的short或char数组的长度大于此常量，较之快速排序则优先使用计数排序。*/
     private static final int COUNTING_SORT_THRESHOLD_FOR_SHORT_OR_CHAR = 3200;
 
     /*

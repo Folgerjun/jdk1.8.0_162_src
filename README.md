@@ -7,3 +7,6 @@ JDK1.8.0_162源码，个人不定时翻译学习
 - [UUID](java/util/UUID.java)
 - [Arrays](java/util/Arrays.java)
 - [ArrayList](java/util/ArrayList.java)
+- [LinkedList](java/util/LinkedList.java)
+- [Collections](java/util/Collections.java)
+- [String](java/lang/String.java)
