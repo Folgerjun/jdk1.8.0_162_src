@@ -10,3 +10,4 @@ JDK1.8.0_162源码，个人不定时翻译学习
 - [LinkedList](java/util/LinkedList.java)
 - [Collections](java/util/Collections.java)
 - [String](java/lang/String.java)
+- [ConcurrentHashMap](java/util/concurrent/ConcurrentHashMap.java)
