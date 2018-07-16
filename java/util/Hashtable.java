@@ -208,7 +208,7 @@ public class Hashtable<K,V>
      * Constructs a new, empty hashtable with a default initial capacity (11)
      * and load factor (0.75).
      */
-    public Hashtable() {
+    public Hashtable() {        // 默认初始大小 11  扩容阈值 0.75
         this(11, 0.75f);
     }
 
@@ -362,10 +362,10 @@ public class Hashtable<K,V>
     public synchronized V get(Object key) {
         Entry<?,?> tab[] = table;
         int hash = key.hashCode();
-        int index = (hash & 0x7FFFFFFF) % tab.length;
+        int index = (hash & 0x7FFFFFFF) % tab.length;       // 获取table下标
         for (Entry<?,?> e = tab[index] ; e != null ; e = e.next) {
-            if ((e.hash == hash) && e.key.equals(key)) {
-                return (V)e.value;
+            if ((e.hash == hash) && e.key.equals(key)) {        // 匹配成功
+                return (V)e.value;      // 返回value值
             }
         }
         return null;
@@ -392,12 +392,12 @@ public class Hashtable<K,V>
         Entry<?,?>[] oldMap = table;
 
         // overflow-conscious code
-        int newCapacity = (oldCapacity << 1) + 1;
-        if (newCapacity - MAX_ARRAY_SIZE > 0) {
-            if (oldCapacity == MAX_ARRAY_SIZE)
+        int newCapacity = (oldCapacity << 1) + 1;       // 原先的2倍加1
+        if (newCapacity - MAX_ARRAY_SIZE > 0) {     // 新容量大于最大容量
+            if (oldCapacity == MAX_ARRAY_SIZE)      // 如果原先容量为最大容量 不扩容直接返回
                 // Keep running with MAX_ARRAY_SIZE buckets
                 return;
-            newCapacity = MAX_ARRAY_SIZE;
+            newCapacity = MAX_ARRAY_SIZE;       // 赋值为最大容量
         }
         Entry<?,?>[] newMap = new Entry<?,?>[newCapacity];
 
@@ -408,11 +408,11 @@ public class Hashtable<K,V>
         for (int i = oldCapacity ; i-- > 0 ;) {
             for (Entry<K,V> old = (Entry<K,V>)oldMap[i] ; old != null ; ) {
                 Entry<K,V> e = old;
-                old = old.next;
+                old = old.next;     // 指向下一个
 
                 int index = (e.hash & 0x7FFFFFFF) % newCapacity;
                 e.next = (Entry<K,V>)newMap[index];
-                newMap[index] = e;
+                newMap[index] = e;      // 循环赋值
             }
         }
     }
@@ -487,7 +487,7 @@ public class Hashtable<K,V>
      *          or <code>null</code> if the key did not have a mapping
      * @throws  NullPointerException  if the key is <code>null</code>
      */
-    public synchronized V remove(Object key) {
+    public synchronized V remove(Object key) {      // 根据key值删除并返回旧值
         Entry<?,?> tab[] = table;
         int hash = key.hashCode();
         int index = (hash & 0x7FFFFFFF) % tab.length;
@@ -519,9 +519,9 @@ public class Hashtable<K,V>
      * @throws NullPointerException if the specified map is null
      * @since 1.2
      */
-    public synchronized void putAll(Map<? extends K, ? extends V> t) {
+    public synchronized void putAll(Map<? extends K, ? extends V> t) {      // 加了synchronized关键字所以它是线程安全的
         for (Map.Entry<? extends K, ? extends V> e : t.entrySet())
-            put(e.getKey(), e.getValue());
+            put(e.getKey(), e.getValue());      // 循环存储
     }
 
     /**
@@ -531,8 +531,8 @@ public class Hashtable<K,V>
         Entry<?,?> tab[] = table;
         modCount++;
         for (int index = tab.length; --index >= 0; )
-            tab[index] = null;
-        count = 0;
+            tab[index] = null;      // 循环赋值 null
+        count = 0;      // 数量置为0
     }
 
     /**
@@ -571,7 +571,7 @@ public class Hashtable<K,V>
      *
      * @return  a string representation of this hashtable
      */
-    public synchronized String toString() {
+    public synchronized String toString() {     // 重写了toString方法
         int max = size() - 1;
         if (max == -1)
             return "{}";
@@ -702,7 +702,7 @@ public class Hashtable<K,V>
             int index = (hash & 0x7FFFFFFF) % tab.length;
 
             for (Entry<?,?> e = tab[index]; e != null; e = e.next)
-                if (e.hash==hash && e.equals(entry))
+                if (e.hash==hash && e.equals(entry))        // 循环匹配 若是匹配成功则返回true
                     return true;
             return false;
         }
@@ -719,15 +719,15 @@ public class Hashtable<K,V>
             @SuppressWarnings("unchecked")
             Entry<K,V> e = (Entry<K,V>)tab[index];
             for(Entry<K,V> prev = null; e != null; prev = e, e = e.next) {
-                if (e.hash==hash && e.equals(entry)) {
+                if (e.hash==hash && e.equals(entry)) {      // 匹配成功
                     modCount++;
                     if (prev != null)
-                        prev.next = e.next;
+                        prev.next = e.next;     // 前节点的下节点指向该节点的下节点
                     else
                         tab[index] = e.next;
 
                     count--;
-                    e.value = null;
+                    e.value = null; // 将value值置为null
                     return true;
                 }
             }
@@ -803,7 +803,7 @@ public class Hashtable<K,V>
 
         try {
             Iterator<Map.Entry<K,V>> i = entrySet().iterator();
-            while (i.hasNext()) {
+            while (i.hasNext()) {       // 迭代器 循环匹配 若是没有匹配到则返回false
                 Map.Entry<K,V> e = i.next();
                 K key = e.getKey();
                 V value = e.getValue();
@@ -1291,7 +1291,7 @@ public class Hashtable<K,V>
                 return false;
             Map.Entry<?,?> e = (Map.Entry<?,?>)o;
 
-            return (key==null ? e.getKey()==null : key.equals(e.getKey())) &&
+            return (key==null ? e.getKey()==null : key.equals(e.getKey())) &&       // key 和 value 都匹配则返回true
                (value==null ? e.getValue()==null : value.equals(e.getValue()));
         }
 
