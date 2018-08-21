@@ -16,6 +16,7 @@ JDK1.8.0_162源码，个人不定时翻译学习
 #### concurrent
 - [ConcurrentHashMap](java/util/concurrent/ConcurrentHashMap.java)
 - [LinkedBlockingQueue](java/util/concurrent/LinkedBlockingQueue.java)
+- [CopyOnWriteArrayList](java/util/concurrent/CopyOnWriteArrayList.java)
 
 ### lang
 - [String](java/lang/String.java)

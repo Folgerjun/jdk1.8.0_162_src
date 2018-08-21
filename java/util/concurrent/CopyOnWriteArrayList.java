@@ -94,7 +94,7 @@ public class CopyOnWriteArrayList<E>
     private static final long serialVersionUID = 8673264195747942595L;
 
     /** The lock protecting all mutators */
-    final transient ReentrantLock lock = new ReentrantLock();
+    final transient ReentrantLock lock = new ReentrantLock(); // 重入锁
 
     /** The array, accessed only via getArray/setArray. */
     private transient volatile Object[] array;
@@ -149,7 +149,7 @@ public class CopyOnWriteArrayList<E>
      *        internal array)
      * @throws NullPointerException if the specified array is null
      */
-    public CopyOnWriteArrayList(E[] toCopyIn) {
+    public CopyOnWriteArrayList(E[] toCopyIn) { // 通过Arrays.copyOf拷贝数组来保证不改变原数组
         setArray(Arrays.copyOf(toCopyIn, toCopyIn.length, Object[].class));
     }
 
@@ -433,16 +433,16 @@ public class CopyOnWriteArrayList<E>
      */
     public boolean add(E e) {
         final ReentrantLock lock = this.lock;
-        lock.lock();
+        lock.lock(); // 加锁
         try {
             Object[] elements = getArray();
             int len = elements.length;
-            Object[] newElements = Arrays.copyOf(elements, len + 1);
-            newElements[len] = e;
-            setArray(newElements);
+            Object[] newElements = Arrays.copyOf(elements, len + 1); // copy生成新数组 容量加一
+            newElements[len] = e; // 赋值
+            setArray(newElements); // 重新指定
             return true;
         } finally {
-            lock.unlock();
+            lock.unlock(); // 释放锁
         }
     }
 
@@ -464,15 +464,15 @@ public class CopyOnWriteArrayList<E>
                                                     ", Size: "+len);
             Object[] newElements;
             int numMoved = len - index;
-            if (numMoved == 0)
+            if (numMoved == 0) // 直接在尾部添加
                 newElements = Arrays.copyOf(elements, len + 1);
-            else {
+            else { // 需要copy两段 拼接
                 newElements = new Object[len + 1];
                 System.arraycopy(elements, 0, newElements, 0, index);
                 System.arraycopy(elements, index, newElements, index + 1,
                                  numMoved);
             }
-            newElements[index] = element;
+            newElements[index] = element; // 赋值
             setArray(newElements);
         } finally {
             lock.unlock();
@@ -609,7 +609,7 @@ public class CopyOnWriteArrayList<E>
      * @param e element to be added to this list, if absent
      * @return {@code true} if the element was added
      */
-    public boolean addIfAbsent(E e) {
+    public boolean addIfAbsent(E e) { // 有该值返回false 无则添加
         Object[] snapshot = getArray();
         return indexOf(e, snapshot, 0, snapshot.length) >= 0 ? false :
             addIfAbsent(e, snapshot);
@@ -625,7 +625,7 @@ public class CopyOnWriteArrayList<E>
         try {
             Object[] current = getArray();
             int len = current.length;
-            if (snapshot != current) {
+            if (snapshot != current) { // 防止期间另外线程进行了添加
                 // Optimize for lost race to another addXXX operation
                 int common = Math.min(snapshot.length, len);
                 for (int i = 0; i < common; i++)
@@ -692,7 +692,7 @@ public class CopyOnWriteArrayList<E>
                 Object[] temp = new Object[len];
                 for (int i = 0; i < len; ++i) {
                     Object element = elements[i];
-                    if (!c.contains(element))
+                    if (!c.contains(element)) // 原数组中不存在的数值保留
                         temp[newlen++] = element;
                 }
                 if (newlen != len) {
@@ -722,7 +722,7 @@ public class CopyOnWriteArrayList<E>
      *         or if the specified collection is null
      * @see #remove(Object)
      */
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(Collection<?> c) { // 交集
         if (c == null) throw new NullPointerException();
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -738,7 +738,7 @@ public class CopyOnWriteArrayList<E>
                     if (c.contains(element))
                         temp[newlen++] = element;
                 }
-                if (newlen != len) {
+                if (newlen != len) { // 非全集
                     setArray(Arrays.copyOf(temp, newlen));
                     return true;
                 }

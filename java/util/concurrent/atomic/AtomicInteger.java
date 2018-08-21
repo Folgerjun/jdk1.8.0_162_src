@@ -56,7 +56,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
 
     // setup to use Unsafe.compareAndSwapInt for updates
     private static final Unsafe unsafe = Unsafe.getUnsafe();
-    private static final long valueOffset;
+    private static final long valueOffset; // value值的偏移地址
 
     static {
         try {
@@ -65,7 +65,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
         } catch (Exception ex) { throw new Error(ex); }
     }
 
-    private volatile int value;
+    private volatile int value; // 实际的value值
 
     /**
      * Creates a new AtomicInteger with the given initial value.
@@ -97,7 +97,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
      * @param newValue the new value
      */
     public final void set(int newValue) {
-        value = newValue;
+        value = newValue; // 设置新值 没有判断oldvalue 所以是非线程安全的
     }
 
     /**
@@ -106,7 +106,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
      * @param newValue the new value
      * @since 1.6
      */
-    public final void lazySet(int newValue) {
+    public final void lazySet(int newValue) { // 与set操作效果一样 采用unsafe对象中通过偏移地址来设置值的方式
         unsafe.putOrderedInt(this, valueOffset, newValue);
     }
 
@@ -116,7 +116,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
      * @param newValue the new value
      * @return the previous value
      */
-    public final int getAndSet(int newValue) {
+    public final int getAndSet(int newValue) { // 原子操作 设置新值 返回旧值
         return unsafe.getAndSetInt(this, valueOffset, newValue);
     }
 
@@ -154,7 +154,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
      *
      * @return the previous value
      */
-    public final int getAndIncrement() {
+    public final int getAndIncrement() { // i++ 操作
         return unsafe.getAndAddInt(this, valueOffset, 1);
     }
 
