@@ -20,3 +20,4 @@ JDK1.8.0_162源码，个人不定时翻译学习
 
 ### lang
 - [String](java/lang/String.java)
+- [Integer](java/lang/Integer.java)

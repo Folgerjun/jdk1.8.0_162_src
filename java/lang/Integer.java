@@ -135,7 +135,7 @@ public final class Integer extends Number implements Comparable<Integer> {
         if (radix == 10) {
             return toString(i);
         }
-
+        // int 32位
         char buf[] = new char[33];
         boolean negative = (i < 0);
         int charPos = 32;
@@ -143,7 +143,7 @@ public final class Integer extends Number implements Comparable<Integer> {
         if (!negative) {
             i = -i;
         }
-
+        // 根据进制取余转换
         while (i <= -radix) {
             buf[charPos--] = digits[-(i % radix)];
             i = i / radix;
@@ -229,6 +229,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see #toUnsignedString(int, int)
      * @since   JDK1.0.2
      */
+    // 返回整数参数的字符串表示形式，作为基数为16的无符号整数。
     public static String toHexString(int i) {
         return toUnsignedString0(i, 4);
     }
@@ -308,7 +309,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      */
     private static String toUnsignedString0(int val, int shift) {
         // assert shift > 0 && shift <=5 : "Illegal shift value";
-        int mag = Integer.SIZE - Integer.numberOfLeadingZeros(val);
+        int mag = Integer.SIZE - Integer.numberOfLeadingZeros(val); // 
         int chars = Math.max(((mag + (shift - 1)) / shift), 1);
         char[] buf = new char[chars];
 
@@ -331,7 +332,7 @@ public final class Integer extends Number implements Comparable<Integer> {
         int charPos = len;
         int radix = 1 << shift;
         int mask = radix - 1;
-        do {
+        do { // 2 的幂次方数取余 先赋值低位 再右移
             buf[offset + --charPos] = Integer.digits[val & mask];
             val >>>= shift;
         } while (val != 0 && charPos > 0);
@@ -658,6 +659,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *             does not contain a parsable {@code int}.
      * @since 1.8
      */
+    // 将字符串参数解析为第二个参数指定的基数中的无符号整数。
     public static int parseUnsignedInt(String s, int radix)
                 throws NumberFormatException {
         if (s == null)  {
@@ -826,7 +828,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @return an {@code Integer} instance representing {@code i}.
      * @since  1.5
      */
-    public static Integer valueOf(int i) {
+    public static Integer valueOf(int i) { // IntegerCache 中没有的话就返回新建对象（即 -128 到 127 之间）
         if (i >= IntegerCache.low && i <= IntegerCache.high)
             return IntegerCache.cache[i + (-IntegerCache.low)];
         return new Integer(i);
@@ -1095,19 +1097,20 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see     System#getProperty(java.lang.String)
      * @see     System#getProperty(java.lang.String, java.lang.String)
      */
+    // 确定具有指定名称的系统属性的整数值。 
     public static Integer getInteger(String nm, Integer val) {
         String v = null;
         try {
             v = System.getProperty(nm);
         } catch (IllegalArgumentException | NullPointerException e) {
         }
-        if (v != null) {
+        if (v != null) { // 系统值有就解析返回
             try {
                 return Integer.decode(v);
             } catch (NumberFormatException e) {
             }
         }
-        return val;
+        return val; // 系统值没有就返回 val
     }
 
     /**
@@ -1152,6 +1155,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *            contain a parsable integer.
      * @see java.lang.Integer#parseInt(java.lang.String, int)
      */
+    // 将String解码为整数。 接受以下语法给出的十进制，十六进制和八进制数
     public static Integer decode(String nm) throws NumberFormatException {
         int radix = 10;
         int index = 0;
@@ -1177,7 +1181,7 @@ public final class Integer extends Number implements Comparable<Integer> {
             index ++;
             radix = 16;
         }
-        else if (nm.startsWith("0", index) && nm.length() > 1 + index) {
+        else if (nm.startsWith("0", index) && nm.length() > 1 + index) { // 0 后面长度要大于 1
             index ++;
             radix = 8;
         }
@@ -1267,6 +1271,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *         conversion
      * @since 1.8
      */
+    // 通过无符号转换将参数转换为long。 在无符号转换为long时，long的高阶32位为零，低阶32位等于整数参数的位。
     public static long toUnsignedLong(int x) {
         return ((long) x) & 0xffffffffL;
     }
@@ -1343,6 +1348,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     the specified value is itself equal to zero.
      * @since 1.5
      */
+    // // 返回一个int值，该值最多只有一位，位于指定int值中最高位（“最左侧”）1的位置。 如果指定的值在其二进制补码表示中没有一位，即，如果它等于零，则返回零。
     public static int highestOneBit(int i) {
         // HD, Figure 3-1
         i |= (i >>  1);
@@ -1366,9 +1372,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     the specified value is itself equal to zero.
      * @since 1.5
      */
+    // 返回一个int值，该值最多只有一位，位于指定int值中最低位（“最右侧”）1的位置。 如果指定的值在其二进制补码表示中没有一位，即，如果它等于零，则返回零。
     public static int lowestOneBit(int i) {
         // HD, Section 2-1
-        return i & -i;
+        return i & -i; // 负数二进制补码 = 其绝对值取反 + 1 （符号位不变）
     }
 
     /**
@@ -1392,14 +1399,27 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     is equal to zero.
      * @since 1.5
      */
+    /**
+     * 首先在 jvm 中一个 int 类型的数据占 4 个字节，共 32 位，其实就相当于一个长度为 32 的数组。
+     *
+     * 那我们要计算首部 0 的个数，就是从左边第一个位开始累加 0 的个数，直到遇到一个非零值。
+     */
     public static int numberOfLeadingZeros(int i) {
         // HD, Figure 5-6
         if (i == 0)
             return 32;
         int n = 1;
+        // 下面的代码就是定位从左边开始第一个非零值的位置，在定位过程中顺便累加从左边开始 0 的个数
+		// 将 i 无符号右移 16 位后，有二种情况；
+		//   情况1. i=0,则第一个非零值位于低 16 位，i 至少有 16 个 0，同时将 i 左移 16 位（把低 16 位移到原高 16 位的位置，这样情况 1 和情况 2 就能统一后续的判断方式）
+		//   情况2. i!=0,则第一个非零值位于高 16 位，后续在高 16 位中继续判断
+		// 这个思路就是二分查找，首先把32位的数分为高低 16 位，如果非零值位于高 16 位，后续再将高 16 位继续二分为高低 8 位，一直二分到集合中只有 1 个元素
         if (i >>> 16 == 0) { n += 16; i <<= 16; }
+        // 判断第一个非零值是否位于高 8 位
         if (i >>> 24 == 0) { n +=  8; i <<=  8; }
+        // 判断第一个非零值是否位于高 4 位
         if (i >>> 28 == 0) { n +=  4; i <<=  4; }
+        // 判断第一个非零值是否位于高 2 位
         if (i >>> 30 == 0) { n +=  2; i <<=  2; }
         n -= i >>> 31;
         return n;
@@ -1419,12 +1439,13 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     to zero.
      * @since 1.5
      */
+    // 返回指定int值的二进制补码表达式中最低位（“最右侧”）1之后的零位数。 
     public static int numberOfTrailingZeros(int i) {
         // HD, Figure 5-14
         int y;
-        if (i == 0) return 32;
+        if (i == 0) return 32; // 如果它等于零 直接返回32
         int n = 31;
-        y = i <<16; if (y != 0) { n = n -16; i = y; }
+        y = i << 16; if (y != 0) { n = n -16; i = y; }
         y = i << 8; if (y != 0) { n = n - 8; i = y; }
         y = i << 4; if (y != 0) { n = n - 4; i = y; }
         y = i << 2; if (y != 0) { n = n - 2; i = y; }
@@ -1441,6 +1462,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     representation of the specified {@code int} value.
      * @since 1.5
      */
+    // 返回指定int值的二进制补码中1的个数
     public static int bitCount(int i) {
         // HD, Figure 5-2
         i = i - ((i >>> 1) & 0x55555555);
@@ -1471,6 +1493,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     specified number of bits.
      * @since 1.5
      */
+    // 返回通过将指定的int值的二进制补码表示法向左旋转指定的位数而获得的值。
     public static int rotateLeft(int i, int distance) {
         return (i << distance) | (i >>> -distance);
     }
@@ -1495,6 +1518,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     specified number of bits.
      * @since 1.5
      */
+    // 返回通过将指定的int值的二进制补码表示法向右旋转指定的位数而获得的值。
     public static int rotateRight(int i, int distance) {
         return (i >>> distance) | (i << -distance);
     }
@@ -1509,6 +1533,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     specified {@code int} value.
      * @since 1.5
      */
+    // 返回通过反转指定int值的二进制补码二进制表示中的位顺序而获得的值。
     public static int reverse(int i) {
         // HD, Figure 7-1
         i = (i & 0x55555555) << 1 | (i >>> 1) & 0x55555555;
@@ -1528,6 +1553,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @return the signum function of the specified {@code int} value.
      * @since 1.5
      */
+    // 返回指定int值的signum函数。 （如果指定的值为负，则返回值为-1;如果指定的值为零，则返回0;如果指定的值为正，则返回1。）
     public static int signum(int i) {
         // HD, Section 2-7
         return (i >> 31) | (-i >>> 31);
@@ -1542,6 +1568,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     {@code int} value.
      * @since 1.5
      */
+    // 返回通过反转指定int值的二进制补码表示中的字节顺序获得的值。
     public static int reverseBytes(int i) {
         return ((i >>> 24)           ) |
                ((i >>   8) &   0xFF00) |
