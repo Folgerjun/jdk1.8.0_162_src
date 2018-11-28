@@ -3083,18 +3083,30 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
             }
             return root;
         }
-
+        /**
+         * 调整红黑树结构。
+         */
         static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,
                                                     TreeNode<K,V> x) {
-            x.red = true;
+            x.red = true; // 所有节点默认插入为红
             for (TreeNode<K,V> xp, xpp, xppl, xppr;;) {
-                if ((xp = x.parent) == null) {
-                    x.red = false;
+                if ((xp = x.parent) == null) { // x.parent == null 说明其为根节点
+                    x.red = false;	// 置黑
                     return x;
                 }
+                // x 父节点为黑色，或者 x 的祖父节点为空，直接插入返回
                 else if (!xp.red || (xpp = xp.parent) == null)
                     return root;
+                /**
+             	 * x 的父节点为红色
+            	 * ---------------------
+            	 * x 的父节点为其祖父节点的左子节点
+            	 */
                 if (xp == (xppl = xpp.left)) {
+                	/*
+                	 * x 的叔父节点存在，且为红色，颜色交换即可
+                	 * x 的父节点、叔父节点变为黑色，祖父节点变为红色
+                	 */
                     if ((xppr = xpp.right) != null && xppr.red) {
                         xppr.red = false;
                         xp.red = false;
@@ -3102,10 +3114,21 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
                         x = xpp;
                     }
                     else {
+                    	/*
+                    	 * x 为其父节点的右子节点，则为内侧插入
+                    	 * 则先左旋，然后右旋
+                    	 */
                         if (x == xp.right) {
+                        	// 左旋
                             root = rotateLeft(root, x = xp);
+                            // 左旋之后 x 则会变成 xp 的父节点
                             xpp = (xp = x.parent) == null ? null : xp.parent;
                         }
+                         /**
+                    	 * 这里有两部分。
+                    	 * 第一部分：x 原本就是其父节点的左子节点，则为外侧插入，右旋即可
+                    	 * 第二部分：内侧插入后，先进行左旋，然后右旋
+                    	 */
                         if (xp != null) {
                             xp.red = false;
                             if (xpp != null) {
